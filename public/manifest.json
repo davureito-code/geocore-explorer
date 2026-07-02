@@ -1,0 +1,10 @@
+{
+  "name": "Explorador de Rutas",
+  "short_name": "Rutas",
+  "description": "App para mapear caminos y marcar lugares sin internet",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "orientation": "portrait"
+}
