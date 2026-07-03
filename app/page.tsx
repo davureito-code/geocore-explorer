@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import ControlCenter from "../components/ControlCenter";
+import MissionPanel from "../components/MissionPanel";
 
 type Point = {
   lat: number;
@@ -24,10 +26,17 @@ type Place = {
 
 type SavedRoute = {
   id: number;
+
+  missionName: string;
+  sectorName: string;
+  missionType: string;
+
   routeName: string;
   destination: string;
+
   points: Point[];
   places: Place[];
+
   totalDistance: number;
   createdAt: string;
 };
@@ -59,6 +68,10 @@ export default function Home() {
   const [current, setCurrent] = useState<Point | null>(null);
   const [placeName, setPlaceName] = useState("");
   const [placeType, setPlaceType] = useState("casa");
+  const [missionName, setMissionName] = useState("");
+const [sectorName, setSectorName] = useState("");
+const [missionType, setMissionType] = useState("mapear_sector");
+
 
   useEffect(() => {
     if ("serviceWorker" in navigator) {
@@ -72,6 +85,9 @@ export default function Home() {
       setDestination(parsed.destination || "");
       setPoints(parsed.points || []);
       setPlaces(parsed.places || []);
+      setMissionName(parsed.missionName || "");
+setSectorName(parsed.sectorName || "");
+setMissionType(parsed.missionType || "mapear_sector");
     }
 
     const savedRoutesData = localStorage.getItem("saved_routes");
@@ -83,7 +99,15 @@ export default function Home() {
   useEffect(() => {
     localStorage.setItem(
       "current_route",
-      JSON.stringify({ routeName, destination, points, places })
+      JSON.stringify({
+  missionName,
+  sectorName,
+  missionType,
+  routeName,
+  destination,
+  points,
+  places,
+})
     );
   }, [routeName, destination, points, places]);
 
@@ -189,6 +213,9 @@ export default function Home() {
       places,
       totalDistance,
       createdAt: new Date().toISOString(),
+      missionName,
+sectorName,
+missionType,
     };
 
     const updated = [route, ...savedRoutes];
@@ -226,6 +253,9 @@ export default function Home() {
             coordinates: [place.lng, place.lat],
           },
           properties: place,
+          missionName,
+sectorName,
+missionType,
         })),
       ],
     };
@@ -412,8 +442,27 @@ export default function Home() {
           )}
         </div>
       </div>
+
+    <ControlCenter
+  current={current}
+  recording={recording}
+  pointsCount={points.length}
+  placesCount={places.length}
+  savedRoutesCount={savedRoutes.length}
+  totalDistance={totalDistance}
+/>
     </main>
   );
+
+<MissionPanel
+  missionName={missionName}
+  setMissionName={setMissionName}
+  sectorName={sectorName}
+  setSectorName={setSectorName}
+  missionType={missionType}
+  setMissionType={setMissionType}
+/>
+
 }
 
 function Info({ title, value }: { title: string; value: string | number }) {
